@@ -1,15 +1,22 @@
+/* src/app/globals.css */
 @import "tailwindcss";
 
+/* テーマ用カラー変数の定義 */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --primary-color: #4f46e5;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ダークモード用カラー変数 */
+[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --bg-color: #1f2937;
+  --text-color: #f9fafb;
+  --primary-color: #818cf8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,8 +26,91 @@
   }
 }
 
+/* 全体の背景と文字色に反映 */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* ページコンテナ */
+.container {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+/* ヘッダ */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* テーマ切替ボタン */
+.theme-toggle {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  opacity: 0.8;
+}
+
+/* 桁数選択 */
+.digit-select {
+  margin-bottom: 16px;
+}
+.digit-select label {
+  margin-right: 8px;
+  font-weight: bold;
+}
+.digit-select select {
+  padding: 4px 8px;
+  font-size: 16px;
+}
+
+/* ボタン共通スタイル */
+button {
+  font-family: inherit;
+}
+
+/* 残り候補ボタン */
+.show-cands {
+  padding: 6px 14px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.show-cands:hover {
+  background-color: #0056b3;
+}
+
+/* 再スタート・履歴表示ボタン */
+.reset,
+.history-btn {
+  padding: 6px 14px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 6px;
+}
+.reset:hover,
+.history-btn:hover {
+  opacity: 0.8;
 }

@@ -1,0 +1,8 @@
+/* src/components/ResultMessage.module.css */
+.message {
+  margin: 12px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+  color: var(--text-color);
+  text-align: center;
+}

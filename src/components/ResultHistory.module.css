@@ -1,0 +1,33 @@
+/* src/components/ResultHistory.module.css */
+.container {
+  margin: 16px auto;
+  text-align: center;
+}
+
+.table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  table-layout: fixed;
+}
+
+.cell {
+  border: 1px solid var(--text-color);
+  padding: 4px 8px;
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.delBtn {
+  padding: 2px 6px;
+  font-size: 0.8em;
+  background-color: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.delBtn:hover {
+  opacity: 0.8;
+}

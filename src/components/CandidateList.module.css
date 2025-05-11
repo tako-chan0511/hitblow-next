@@ -1,0 +1,49 @@
+/* src/components/CandidateList.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.panel {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--text-color);
+  margin-bottom: 12px;
+}
+
+.listItem {
+  display: inline-block;
+  margin: 2px 4px;
+  padding: 4px 8px;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.loading p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: var(--text-color);
+}

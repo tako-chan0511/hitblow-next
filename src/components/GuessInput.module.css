@@ -1,0 +1,108 @@
+/* src/components/GuessInput.module.css */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.slots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.slot {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  font-size: 20px;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.pasteInputContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pasteInput {
+  padding: 6px 8px;
+  font-size: 16px;
+  text-align: center;
+  /* 必要に応じて幅は inline style で制御してください */
+}
+.pasteBtn,
+.submitBtn {
+  padding: 6px 12px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pasteBtn {
+  background-color: #10b981;
+  color: #fff;
+}
+.submitBtn {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+.pasteBtn:disabled,
+.submitBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.loading {
+  margin-top: 8px;
+  text-align: center;
+}
+.loading p {
+  margin: 4px 0;
+}
+.pickerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.pickerPanel {
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.pickerBtn {
+  padding: 8px 0;
+  font-size: 18px;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pickerBtn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+.deleteBtn {
+  background-color: #e53e3e;
+}
+.deleteBtn:hover {
+  opacity: 0.8;
+}
