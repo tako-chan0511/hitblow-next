@@ -1,0 +1,56 @@
+// .vscode/settings.json
+{
+  // —————————————————————————————————————
+  // エディター全体設定
+  // —————————————————————————————————————
+  // ファイル保存時にフォーマット実行
+  "editor.formatOnSave": true,
+
+  // インデントはスペース4つ
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+
+  // ファイル保存時に末尾のホワイトスペース削除
+  "files.trimTrailingWhitespace": true,
+
+  // —————————————————————————————————————
+  // ESLint 連携設定
+  // —————————————————————————————————————
+  // ESLint をフォーマッタとしても機能させる
+  "eslint.format.enable": true,
+
+  // 保存時に ESLint の自動修正を実行
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // Next.js や React 向けの検証を有効化
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // —————————————————————————————————————
+  // Prettier（併用する場合）の設定
+  // —————————————————————————————————————
+  // Prettier をフォーマッタに指定したいとき
+  // "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // —————————————————————————————————————
+  // パスエイリアス (@ → src) が ESLint / TS 側と揃うように
+  // —————————————————————————————————————
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+
+  // —————————————————————————————————————
+  // 必要に応じてワークスペース推奨拡張を表示
+  // —————————————————————————————————————
+  "extensions.recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "naumovs.color-highlight"
+  ]
+}
