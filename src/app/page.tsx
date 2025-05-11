@@ -24,7 +24,7 @@ export default function Page() {
   return (
     <main className="container">
       <header className="app-header">
-        <h1>Hit & Blow ({store.digitCount}桁)</h1>
+        <h1>Hit & Blow Next.js版!!! ({store.digitCount}桁)</h1>
         <ThemeToggle />
       </header>
 

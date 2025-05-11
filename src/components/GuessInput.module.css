@@ -33,10 +33,17 @@
   gap: 4px;
 }
 .pasteInput {
+  /* フォーカス前でも表示されるように入力欄そのものに枠線を指定 */
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
   padding: 6px 8px;
-  font-size: 16px;
-  text-align: center;
-  /* 必要に応じて幅は inline style で制御してください */
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  outline: none; /* フォーカスの青枠などは別に */
+}
+/* フォーカス時に枠色を変えたい場合 */
+.pasteInput:focus {
+  border-color: var(--primary-color);
 }
 .pasteBtn,
 .submitBtn {

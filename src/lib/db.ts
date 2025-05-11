@@ -71,11 +71,11 @@ export async function fetchResults(): Promise<{
   const res = database.exec('SELECT * FROM results ORDER BY id DESC;')
   if (!res.length) return []
   const { columns, values } = res[0]
-  return values.map(row =>
-    columns.reduce((obj: any, col: string, i: number) => {
-      obj[col] = row[i]
-      return obj
-    }, {})
+  return values.map((row: any[]) =>
+    columns.reduce((obj: Record<string, any>, col: string, i: number) => {
+    obj[col] = row[i]
+    return obj
+    }, {} as Record<string, any>)
   )
 }
 

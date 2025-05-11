@@ -54,13 +54,14 @@ body {
 
 /* テーマ切替ボタン */
 .theme-toggle {
-  padding: 6px 12px;
-  font-size: 14px;
+  padding: 6px 14px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
   border: none;
   border-radius: 4px;
-  background-color: var(--primary-color);
-  color: var(--text-color);
   cursor: pointer;
+  margin: 0 6px;
 }
 .theme-toggle:hover {
   opacity: 0.8;
@@ -77,6 +78,25 @@ body {
 .digit-select select {
   padding: 4px 8px;
   font-size: 16px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+}
+
+/* セレクト項目 */
+option {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* 数字入力スロット周りに枠を常時表示 */
+.guess-input .slots {
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  padding: 8px;
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 /* ボタン共通スタイル */
@@ -99,6 +119,33 @@ button {
 }
 
 /* 再スタート・履歴表示ボタン */
+.reset,
+.history-btn {
+  padding: 6px 14px;
+  font-size: 16px;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 6px;
+}
+.reset:hover,
+.history-btn:hover {
+  opacity: 0.8;
+}
+
+/* まとめ入力フィールド (bulk input) を矩形表示 */
+.guess-input .bulk-input {
+  display: inline-block;
+  width: auto;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin: 8px 0 16px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
 .reset,
 .history-btn {
   padding: 6px 14px;
