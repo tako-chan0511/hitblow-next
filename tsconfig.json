@@ -15,10 +15,13 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+
+    /* ここからエイリアス設定 */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     },
+    /* プラグイン設定 */
     "plugins": [
       {
         "name": "next"
@@ -30,6 +33,7 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "src/types/**/*.ts",        /* 型定義用フォルダを追加 */
     ".next/types/**/*.ts"
   ],
   "exclude": [
