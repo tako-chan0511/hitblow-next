@@ -1,4 +1,6 @@
+// .eslintrc.json
 {
+  "root": true,
   "extends": ["next/core-web-vitals"],
   "rules": {
     "@typescript-eslint/no-empty-object-type": "off",
