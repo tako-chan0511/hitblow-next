@@ -16,26 +16,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  // // ビルド時に注入される環境変数
-  // const base = process.env.NEXT_PUBLIC_BASE_PATH || "./";
-  // console.log(">>> base href is:", base);
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    // <html lang="ja">
-    //   <head>
-    //     {/* development では "./"、production では "/hitblow-next/" */}
-    //     <base href={base} />
-    //     <script
-    //       dangerouslySetInnerHTML={{
-    //         __html: `(() => {
-    //           try {
-    //             const t = localStorage.getItem('theme');
-    //             if (t) document.documentElement.setAttribute('data-theme', t);
-    //           } catch {}
-    //         })();`,
-    //       }}
-    //     />
-    //   </head>
+    <html lang="ja">
+      <head /> {/* Next.js will populate via head.tsx */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
