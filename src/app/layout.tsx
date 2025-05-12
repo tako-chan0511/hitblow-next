@@ -21,7 +21,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <head /> {/* Next.js will populate via head.tsx */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
