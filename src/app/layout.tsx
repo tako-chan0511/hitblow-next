@@ -17,18 +17,20 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // ビルド時に注入される環境変数
+  const base = process.env.NEXT_PUBLIC_BASE_PATH || "./";
+  console.log(">>> base href is:", base);
   return (
     <html lang="ja">
       <head>
-        {/* .html と同じ階層から相対的に CSS/JS を読みに行く */}
-        <base href="./" />
-        {/* テーマ初期化 */}
+        {/* development では "./"、production では "/hitblow-next/" */}
+        <base href={base} />
         <script
           dangerouslySetInnerHTML={{
             __html: `(() => {
               try {
-                const t = localStorage.getItem('theme')
-                if (t) document.documentElement.setAttribute('data-theme', t)
+                const t = localStorage.getItem('theme');
+                if (t) document.documentElement.setAttribute('data-theme', t);
               } catch {}
             })();`,
           }}
