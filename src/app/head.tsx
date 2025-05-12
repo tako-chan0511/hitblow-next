@@ -2,7 +2,8 @@
 import React from "react";
 
 export default function Head() {
-  const base = process.env.NEXT_PUBLIC_BASE_PATH || "./";
+  const raw = process.env.NEXT_PUBLIC_BASE_PATH || ".";
+  const base = raw.endsWith("/") ? raw : raw + "/";
   return (
     <>
       {/* development: "./" / production: "/hitblow-next/" */}
