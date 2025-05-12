@@ -8,8 +8,14 @@ const STORAGE_KEY = 'hitblow-db'
 /** データベース初期化 */
 async function initDb(): Promise<Database> {
   if (!SQL) {
-    // wasm ファイルは public/sql-wasm.wasm に配置しておく
-    SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' })
+    SQL = await initSqlJs({
+      locateFile: (file) => {
+        // NEXT_PUBLIC_BASE_PATH は .env.production で /hitblow-next に設定済み
+        const base = process.env.NEXT_PUBLIC_BASE_PATH || '';
+        // 先頭スラッシュを重複させないように調整
+        return `${base}/${file}`;
+      }
+    });
   }
   if (!db) {
     const saved = localStorage.getItem(STORAGE_KEY)
