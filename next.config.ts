@@ -1,8 +1,10 @@
+const isProd = process.env.NODE_ENV === 'production'
+console.log('🛠 next.config.ts → isProd=', isProd)
 const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
-  basePath: '/hitblow-next',       // 本番時のベースパス
-  assetPrefix: '/hitblow-next/',   // ← 末尾に「/」を必ず付ける
+  basePath: isProd ? '/hitblow-next' : '',        // ← ここ
+  assetPrefix: isProd ? '/hitblow-next/' : '',    // ← ここ
   eslint: { ignoreDuringBuilds: true },
   webpack(config, { isServer }) {
     if (!isServer) config.resolve.fallback = { fs: false, path: false }
