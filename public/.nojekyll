@@ -1,0 +1,4 @@
+/public
+  .nojekyll
+  favicon.ico
+  sql-wasm.wasm
