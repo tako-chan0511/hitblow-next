@@ -5,7 +5,7 @@
   "homepage": "https://tako-chan0511.github.io/hitblow-next/",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "export": "next export",
     "start": "next start",
     "predeploy": "npm run build",
