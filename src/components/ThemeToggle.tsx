@@ -1,16 +1,20 @@
 // src/components/ThemeToggle.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSettings } from "@/stores/settingsStore";
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useSettings();
+  const [mounted, setMounted] = useState(false);
 
-  // マウント時にも属性を同期
+  // マウント時にのみ true に
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-  }, [theme]);
+    setMounted(true);
+  }, []);
+
+  // マウント前は空返しで SSR と同じままに
+  if (!mounted) return null;
 
   return (
     <button onClick={toggleTheme} className="theme-toggle">
