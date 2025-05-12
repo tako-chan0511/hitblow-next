@@ -16,6 +16,7 @@ class MyDocument extends Document {
   render() {
     // 環境変数で設定された basePath を反映
     const baseHref = process.env.NEXT_PUBLIC_BASE_PATH || "./";
+    console.log("🛠 _document.tsx → baseHref=", baseHref);
 
     return (
       <Html lang="ja">
