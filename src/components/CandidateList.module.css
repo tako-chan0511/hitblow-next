@@ -133,3 +133,16 @@
   color: #888;
   text-align: center;
 }
+/* 数字ボタンの無効時 */
+.filterPickerBtn:disabled {
+  background-color: #ddd;
+  color: #888;
+  cursor: not-allowed;
+}
+
+/* 削除ボタンの無効時 */
+.filterPickerClear:disabled {
+  background-color: #ddd;
+  color: #888;
+  cursor: not-allowed;
+}

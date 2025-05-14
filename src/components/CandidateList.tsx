@@ -90,17 +90,23 @@ export default function CandidateList({ onClose }: CandidateListProps) {
 
                   {pickerIdx === idx && (
                     <div className={styles.filterPickerPanel}>
-                      {Array.from({ length: 10 }, (_, i) => (
-                        <button
-                          key={i}
-                          className={styles.filterPickerBtn}
-                          onClick={() => selectFilter(String(i), idx)}
-                        >
-                          {i}
-                        </button>
-                      ))}
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const numStr = String(i);
+                        const disabled = filterSlots.includes(numStr);
+                        return (
+                          <button
+                            key={i}
+                            className={styles.filterPickerBtn}
+                            disabled={disabled}
+                            onClick={() => selectFilter(numStr, idx)}
+                          >
+                            {i}
+                          </button>
+                        );
+                      })}
                       <button
                         className={styles.filterPickerClear}
+                        disabled={filterSlots[idx] === ""} // 空スロットなら無効化
                         onClick={() => selectFilter("", idx)}
                       >
                         削除
