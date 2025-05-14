@@ -46,6 +46,9 @@ export default function CandidateList({ onClose }: CandidateListProps) {
     );
   }, [remainingCandidates, filterSlots]);
 
+  // ★ 1000件までに制限
+  const displayedLimited = useMemo(() => displayed.slice(0, 1000), [displayed]);
+
   // スロット選択時
   const onSlotClick = (idx: number) => {
     setPickerIdx(pickerIdx === idx ? null : idx);
@@ -87,7 +90,6 @@ export default function CandidateList({ onClose }: CandidateListProps) {
 
                   {pickerIdx === idx && (
                     <div className={styles.filterPickerPanel}>
-                      {/* 0-9 */}
                       {Array.from({ length: 10 }, (_, i) => (
                         <button
                           key={i}
@@ -97,7 +99,6 @@ export default function CandidateList({ onClose }: CandidateListProps) {
                           {i}
                         </button>
                       ))}
-                      {/* 削除 */}
                       <button
                         className={styles.filterPickerClear}
                         onClick={() => selectFilter("", idx)}
@@ -110,9 +111,16 @@ export default function CandidateList({ onClose }: CandidateListProps) {
               ))}
             </div>
 
+            {/* 件数表示 */}
             <h2>残り候補 ({displayed.length})</h2>
+            {displayed.length > 1000 && (
+              <p className={styles.limitNotice}>
+                ※先頭1000件のみ表示しています
+              </p>
+            )}
+
             <div className={styles.list}>
-              {displayed.map((num) => (
+              {displayedLimited.map((num) => (
                 <span key={num} className={styles.listItem}>
                   {num}
                 </span>

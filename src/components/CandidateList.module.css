@@ -126,3 +126,10 @@
   background: red;
   color: white;
 }
+
+.limitNotice {
+  margin: 4px 0;
+  font-size: 0.9em;
+  color: #888;
+  text-align: center;
+}
