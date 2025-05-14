@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:gh": "cross-env DEPLOY_TARGET=GH_PAGES next build && next export",
-    "export": "next export",
-    "start": "next start",
+    "build:gh": "cross-env DEPLOY_TARGET=GH_PAGES next build",
     "predeploy": "npm run build:gh",
     "deploy": "gh-pages -d out --dotfiles",
     "lint": "next lint"
