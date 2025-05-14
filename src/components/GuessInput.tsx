@@ -178,6 +178,7 @@ export default function GuessInput({}: GuessInputProps) {
             <button
               className={`${styles.pickerBtn} ${styles.deleteBtn}`}
               onClick={clearDigit}
+              disabled={currentIdx === null || digits[currentIdx] === ""}
             >
               削除
             </button>
