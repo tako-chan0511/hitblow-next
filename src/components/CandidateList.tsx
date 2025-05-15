@@ -1,13 +1,22 @@
+// src/components/CandidateList.tsx
 "use client";
+
 import React, { useEffect, useState, useMemo } from "react";
 import { useGameStore } from "@/stores/gameStore";
 import styles from "./CandidateList.module.css";
 
 type CandidateListProps = {
   onClose: () => void;
+  onSelectCandidate?: (candidate: string) => void;
 };
 
-export default function CandidateList({ onClose }: CandidateListProps) {
+export default function CandidateList({
+  onClose,
+  onSelectCandidate,
+}: CandidateListProps) {
+  // fallback: directly update store if callback absent
+  const setDigits = useGameStore((s) => s.setCurrentGuess);
+
   const remainingCandidates = useGameStore((s) => s.candidates);
   const [loading, setLoading] = useState(true);
   const [filterSlots, setFilterSlots] = useState<string[]>([]);
@@ -15,7 +24,12 @@ export default function CandidateList({ onClose }: CandidateListProps) {
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
 
-  // 1) 候補が更新されたらフィルタースロット初期化
+  // Debug: ensure prop is passed
+  useEffect(() => {
+    console.log("CandidateList onSelectCandidate prop:", onSelectCandidate);
+  }, [onSelectCandidate]);
+
+  // Initialize filterSlots when candidates load
   useEffect(() => {
     if (remainingCandidates.length > 0) {
       setFilterSlots(Array(remainingCandidates[0].length).fill(""));
@@ -23,22 +37,22 @@ export default function CandidateList({ onClose }: CandidateListProps) {
     }
   }, [remainingCandidates]);
 
-  // 2) ローディング演出
+  // Loading timer
   useEffect(() => {
-    let to: ReturnType<typeof setTimeout>;
-    let iv: ReturnType<typeof setInterval>;
-    to = setTimeout(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    let intervalId: ReturnType<typeof setInterval>;
+    timeoutId = setTimeout(() => {
       setShowTimer(true);
       const start = Date.now();
-      iv = setInterval(() => setElapsedMs(Date.now() - start), 100);
+      intervalId = setInterval(() => setElapsedMs(Date.now() - start), 100);
     }, 3000);
     return () => {
-      clearTimeout(to);
-      clearInterval(iv);
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
     };
   }, [remainingCandidates]);
 
-  // 3) 絞り込み
+  // Filter logic
   const displayed = useMemo(() => {
     if (filterSlots.every((d) => d === "")) return remainingCandidates;
     return remainingCandidates.filter((num) =>
@@ -46,28 +60,18 @@ export default function CandidateList({ onClose }: CandidateListProps) {
     );
   }, [remainingCandidates, filterSlots]);
 
-  // ★ 1000件までに制限
+  // Performance: cap at 1000
   const displayedLimited = useMemo(() => displayed.slice(0, 1000), [displayed]);
 
-  // スロット選択時
-  const onSlotClick = (idx: number) => {
-    setPickerIdx(pickerIdx === idx ? null : idx);
-  };
-  // ポップアップの値選択／クリア
-  const selectFilter = (digit: string, idx: number) => {
-    setFilterSlots((prev) => {
-      const arr = [...prev];
-      arr[idx] = digit;
-      return arr;
-    });
-    setPickerIdx(null);
-  };
-
+  // Format elapsed
   const formattedTime = useMemo(() => {
     const s = Math.floor(elapsedMs / 1000);
     const ms = elapsedMs % 1000;
     return `${s}.${String(ms).padStart(3, "0")} 秒`;
   }, [elapsedMs]);
+
+  // Button mode when <=10
+  const allowButtons = displayed.length <= 10;
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -78,36 +82,48 @@ export default function CandidateList({ onClose }: CandidateListProps) {
 
         {!loading ? (
           <>
+            {/* Filter slots */}
             <div className={styles.filterSlots}>
               {filterSlots.map((digit, idx) => (
                 <div key={idx} className={styles.slotWrapper}>
                   <button
                     className={styles.filterSlot}
-                    onClick={() => onSlotClick(idx)}
+                    onClick={() => setPickerIdx(pickerIdx === idx ? null : idx)}
                   >
-                    {digit === "" ? "―" : digit}
+                    {digit || "ー"}
                   </button>
-
                   {pickerIdx === idx && (
                     <div className={styles.filterPickerPanel}>
-                      {Array.from({ length: 10 }, (_, i) => {
-                        const numStr = String(i);
-                        const disabled = filterSlots.includes(numStr);
-                        return (
+                      {Array.from({ length: 10 }, (_, i) => String(i)).map(
+                        (num) => (
                           <button
-                            key={i}
+                            key={num}
                             className={styles.filterPickerBtn}
-                            disabled={disabled}
-                            onClick={() => selectFilter(numStr, idx)}
+                            disabled={filterSlots.includes(num)}
+                            onClick={() => {
+                              setFilterSlots((prev) => {
+                                const arr = [...prev];
+                                arr[idx] = num;
+                                return arr;
+                              });
+                              setPickerIdx(null);
+                            }}
                           >
-                            {i}
+                            {num}
                           </button>
-                        );
-                      })}
+                        )
+                      )}
                       <button
                         className={styles.filterPickerClear}
-                        disabled={filterSlots[idx] === ""} // 空スロットなら無効化
-                        onClick={() => selectFilter("", idx)}
+                        disabled={filterSlots[idx] === ""}
+                        onClick={() => {
+                          setFilterSlots((prev) => {
+                            const arr = [...prev];
+                            arr[idx] = "";
+                            return arr;
+                          });
+                          setPickerIdx(null);
+                        }}
                       >
                         削除
                       </button>
@@ -117,7 +133,7 @@ export default function CandidateList({ onClose }: CandidateListProps) {
               ))}
             </div>
 
-            {/* 件数表示 */}
+            {/* Count & notice */}
             <h2>残り候補 ({displayed.length})</h2>
             {displayed.length > 1000 && (
               <p className={styles.limitNotice}>
@@ -125,12 +141,39 @@ export default function CandidateList({ onClose }: CandidateListProps) {
               </p>
             )}
 
+            {/* When <=10 show message */}
+            {allowButtons && (
+              <p className={styles.buttonNotice}>
+                候補が10件以下になりました。番号を選択してください。
+              </p>
+            )}
+
+            {/* Candidate list */}
             <div className={styles.list}>
-              {displayedLimited.map((num) => (
-                <span key={num} className={styles.listItem}>
-                  {num}
-                </span>
-              ))}
+              {allowButtons
+                ? displayed.map((num) => (
+                    <button
+                      key={num}
+                      className={styles.listItemButton}
+                      style={{ backgroundColor: "#4a90e2", color: "#fff" }}
+                      onClick={() => {
+                        console.log("CandidateList clicked:", num);
+                        if (onSelectCandidate) {
+                          onSelectCandidate(num);
+                        } else {
+                          setDigits(num.split(""));
+                        }
+                        onClose();
+                      }}
+                    >
+                      {num}
+                    </button>
+                  ))
+                : displayedLimited.map((num) => (
+                    <span key={num} className={styles.listItem}>
+                      {num}
+                    </span>
+                  ))}
             </div>
           </>
         ) : (

@@ -146,3 +146,22 @@
   color: #888;
   cursor: not-allowed;
 }
+/* 通常の span タグと並べても違和感ないボタン風 */
+.listItemButton {
+  display: inline-block;
+  margin: 2px 4px;
+  padding: 4px 8px;
+  /* secondary-color → primary-color に変更 */
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 4px;
+  font-family: monospace;
+  cursor: pointer;
+  text-align: center;
+}
+.listItemButton:disabled {
+  background-color: #aaa;
+  color: #666;
+  cursor: not-allowed;
+}

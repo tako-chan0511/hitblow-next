@@ -44,6 +44,11 @@ export interface GameState {
   candidates: string[]
   candidatesHistory: string[][]
   startTime: number
+
+  // 新規: 入力スロット用 state
+  currentGuess: string[]
+  setCurrentGuess: (digits: string[]) => void
+
   setDigitCount: (n: number) => void
   reset: () => void
   checkGuess: (guess: string) => Promise<void>
@@ -60,6 +65,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   candidatesHistory: [allCandidatesFast(4)],
   startTime: Date.now(),
 
+  // 初期入力スロットを空文字で埋める
+  currentGuess: Array(4).fill(''),
+  setCurrentGuess: (digits) => set({ currentGuess: digits }),
+
   setDigitCount: (n) => {
     const cnt = Math.max(1, Math.min(10, n))
     const init = allCandidatesFast(cnt)
@@ -71,6 +80,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       candidates: init,
       candidatesHistory: [init],
       startTime: Date.now(),
+      currentGuess: Array(cnt).fill(''),
     })
   },
 
@@ -84,21 +94,18 @@ export const useGameStore = create<GameState>((set, get) => ({
       candidates: init,
       candidatesHistory: [init],
       startTime: Date.now(),
+      currentGuess: Array(cnt).fill(''),
     })
   },
 
   checkGuess: async (guess) => {
     const { digitCount, secret, history, candidates, candidatesHistory } = get()
-    // Hit/Blow 計算
-    let hit = 0;
-    let blow = 0;
+    let hit = 0; let blow = 0
     for (let i = 0; i < digitCount; i++) {
       if (guess[i] === secret[i]) hit++
       else if (secret.includes(guess[i])) blow++
     }
-    // 履歴更新
     const newHistory = [...history, { guess, hit, blow }]
-    // 候補絞り込み
     const newCands = candidates.filter(candidate => {
       let h = 0, b = 0
       for (let i = 0; i < digitCount; i++) {
@@ -108,12 +115,10 @@ export const useGameStore = create<GameState>((set, get) => ({
       return h === hit && b === blow
     })
     const newCandHist = [...candidatesHistory, newCands]
-    // メッセージ
     const msg = hit === digitCount
       ? `正解！秘密の数字は ${secret} でした。`
       : `${hit} Hit, ${blow} Blow`
     set({ history: newHistory, candidates: newCands, candidatesHistory: newCandHist, message: msg })
-    // 正解時に DB 保存
     if (hit === digitCount) {
       const elapsed = Date.now() - get().startTime
       await addResult(digitCount, newHistory.length, elapsed)
