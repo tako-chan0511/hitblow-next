@@ -50,7 +50,7 @@ export default function Home() {
 
       <div className={styles.buttonRow}>
         <button className={styles.showCands} onClick={() => setShowCands(true)}>
-          残り候補を表示
+          サポート機能
         </button>
         <button className={styles.reset} onClick={store.reset}>
           再スタート

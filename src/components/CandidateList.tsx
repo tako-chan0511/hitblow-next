@@ -14,30 +14,22 @@ export default function CandidateList({
   onClose,
   onSelectCandidate,
 }: CandidateListProps) {
-  // fallback: directly update store if callback absent
   const setDigits = useGameStore((s) => s.setCurrentGuess);
-
   const remainingCandidates = useGameStore((s) => s.candidates);
+  const digitCount = useGameStore((s) => s.digitCount);
+  const secret = useGameStore((s) => s.secret);
+
   const [loading, setLoading] = useState(true);
   const [filterSlots, setFilterSlots] = useState<string[]>([]);
   const [pickerIdx, setPickerIdx] = useState<number | null>(null);
+
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
 
-  // Debug: ensure prop is passed
-  useEffect(() => {
-    console.log("CandidateList onSelectCandidate prop:", onSelectCandidate);
-  }, [onSelectCandidate]);
+  // ★ ヒント数のステート
+  const [hintCount, setHintCount] = useState<number>(0);
 
-  // Initialize filterSlots when candidates load
-  useEffect(() => {
-    if (remainingCandidates.length > 0) {
-      setFilterSlots(Array(remainingCandidates[0].length).fill(""));
-      setLoading(false);
-    }
-  }, [remainingCandidates]);
-
-  // Loading timer
+  // ローディングタイマー
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
     let intervalId: ReturnType<typeof setInterval>;
@@ -52,7 +44,32 @@ export default function CandidateList({
     };
   }, [remainingCandidates]);
 
-  // Filter logic
+  // 初期フィルタースロット生成
+  useEffect(() => {
+    if (remainingCandidates.length > 0) {
+      setFilterSlots(Array(digitCount).fill(""));
+      setLoading(false);
+    }
+  }, [remainingCandidates, digitCount]);
+
+  // ★ hintCount が変わったら、filterSlots に直接ヒントを埋め込む
+  useEffect(() => {
+    const newSlots = Array(digitCount).fill("");
+    if (hintCount > 0) {
+      // 乱数でヒント位置を選択
+      const indices = Array.from({ length: digitCount }, (_, i) => i);
+      for (let k = 0; k < hintCount && indices.length > 0; k++) {
+        const rnd = Math.floor(Math.random() * indices.length);
+        const pos = indices.splice(rnd, 1)[0];
+        newSlots[pos] = secret[pos];
+      }
+    }
+    setFilterSlots(newSlots);
+    // pickerIdxリセット
+    setPickerIdx(null);
+  }, [hintCount, digitCount, secret]);
+
+  // フィルタリング
   const displayed = useMemo(() => {
     if (filterSlots.every((d) => d === "")) return remainingCandidates;
     return remainingCandidates.filter((num) =>
@@ -60,18 +77,34 @@ export default function CandidateList({
     );
   }, [remainingCandidates, filterSlots]);
 
-  // Performance: cap at 1000
   const displayedLimited = useMemo(() => displayed.slice(0, 1000), [displayed]);
+  const allowButtons = displayed.length <= 10;
 
-  // Format elapsed
   const formattedTime = useMemo(() => {
     const s = Math.floor(elapsedMs / 1000);
     const ms = elapsedMs % 1000;
     return `${s}.${String(ms).padStart(3, "0")} 秒`;
   }, [elapsedMs]);
 
-  // Button mode when <=10
-  const allowButtons = displayed.length <= 10;
+  const numbers = useMemo(
+    () => Array.from({ length: 10 }, (_, i) => String(i)),
+    []
+  );
+
+  function selectFilter(digit: string, idx: number) {
+    setFilterSlots((prev) => {
+      const arr = [...prev];
+      arr[idx] = digit;
+      return arr;
+    });
+    setPickerIdx(null);
+  }
+
+  function handleSelect(num: string) {
+    if (onSelectCandidate) onSelectCandidate(num);
+    else setDigits(num.split(""));
+    onClose();
+  }
 
   return (
     <div className={styles.overlay} onClick={onClose}>
@@ -82,7 +115,26 @@ export default function CandidateList({
 
         {!loading ? (
           <>
-            {/* Filter slots */}
+            {/* ヒントプルダウン */}
+            <div className={styles.hintControls}>
+              <label htmlFor="hintCount">ヒント数:</label>
+              <select
+                id="hintCount"
+                value={hintCount}
+                onChange={(e) => setHintCount(Number(e.target.value))}
+              >
+                <option value={0}>なし</option>
+                {Array.from({ length: digitCount }, (_, i) => i + 1).map(
+                  (n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            {/* フィルタースロット */}
             <div className={styles.filterSlots}>
               {filterSlots.map((digit, idx) => (
                 <div key={idx} className={styles.slotWrapper}>
@@ -94,36 +146,20 @@ export default function CandidateList({
                   </button>
                   {pickerIdx === idx && (
                     <div className={styles.filterPickerPanel}>
-                      {Array.from({ length: 10 }, (_, i) => String(i)).map(
-                        (num) => (
-                          <button
-                            key={num}
-                            className={styles.filterPickerBtn}
-                            disabled={filterSlots.includes(num)}
-                            onClick={() => {
-                              setFilterSlots((prev) => {
-                                const arr = [...prev];
-                                arr[idx] = num;
-                                return arr;
-                              });
-                              setPickerIdx(null);
-                            }}
-                          >
-                            {num}
-                          </button>
-                        )
-                      )}
+                      {numbers.map((num) => (
+                        <button
+                          key={num}
+                          className={styles.filterPickerBtn}
+                          disabled={filterSlots.includes(num)}
+                          onClick={() => selectFilter(num, idx)}
+                        >
+                          {num}
+                        </button>
+                      ))}
                       <button
                         className={styles.filterPickerClear}
                         disabled={filterSlots[idx] === ""}
-                        onClick={() => {
-                          setFilterSlots((prev) => {
-                            const arr = [...prev];
-                            arr[idx] = "";
-                            return arr;
-                          });
-                          setPickerIdx(null);
-                        }}
+                        onClick={() => selectFilter("", idx)}
                       >
                         削除
                       </button>
@@ -133,22 +169,20 @@ export default function CandidateList({
               ))}
             </div>
 
-            {/* Count & notice */}
+            {/* 件数＆表示 */}
             <h2>残り候補 ({displayed.length})</h2>
             {displayed.length > 1000 && (
               <p className={styles.limitNotice}>
                 ※先頭1000件のみ表示しています
               </p>
             )}
-
-            {/* When <=10 show message */}
             {allowButtons && (
               <p className={styles.buttonNotice}>
-                候補が10件以下になりました。番号を選択してください。
+                候補が10件以下になりました。番号をクリックしてください。
               </p>
             )}
 
-            {/* Candidate list */}
+            {/* 候補リスト */}
             <div className={styles.list}>
               {allowButtons
                 ? displayed.map((num) => (
@@ -156,15 +190,7 @@ export default function CandidateList({
                       key={num}
                       className={styles.listItemButton}
                       style={{ backgroundColor: "#4a90e2", color: "#fff" }}
-                      onClick={() => {
-                        console.log("CandidateList clicked:", num);
-                        if (onSelectCandidate) {
-                          onSelectCandidate(num);
-                        } else {
-                          setDigits(num.split(""));
-                        }
-                        onClose();
-                      }}
+                      onClick={() => handleSelect(num)}
                     >
                       {num}
                     </button>
