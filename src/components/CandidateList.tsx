@@ -22,12 +22,10 @@ export default function CandidateList({
   const [loading, setLoading] = useState(true);
   const [filterSlots, setFilterSlots] = useState<string[]>([]);
   const [pickerIdx, setPickerIdx] = useState<number | null>(null);
+  const [hintCount, setHintCount] = useState<number>(0);
 
   const [showTimer, setShowTimer] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);
-
-  // ★ ヒント数のステート
-  const [hintCount, setHintCount] = useState<number>(0);
 
   // ローディングタイマー
   useEffect(() => {
@@ -44,7 +42,7 @@ export default function CandidateList({
     };
   }, [remainingCandidates]);
 
-  // 初期フィルタースロット生成
+  // フィルタースロット初期化
   useEffect(() => {
     if (remainingCandidates.length > 0) {
       setFilterSlots(Array(digitCount).fill(""));
@@ -52,11 +50,10 @@ export default function CandidateList({
     }
   }, [remainingCandidates, digitCount]);
 
-  // ★ hintCount が変わったら、filterSlots に直接ヒントを埋め込む
+  // ヒント数が変わったらランダムに埋め込む
   useEffect(() => {
     const newSlots = Array(digitCount).fill("");
     if (hintCount > 0) {
-      // 乱数でヒント位置を選択
       const indices = Array.from({ length: digitCount }, (_, i) => i);
       for (let k = 0; k < hintCount && indices.length > 0; k++) {
         const rnd = Math.floor(Math.random() * indices.length);
@@ -65,11 +62,10 @@ export default function CandidateList({
       }
     }
     setFilterSlots(newSlots);
-    // pickerIdxリセット
     setPickerIdx(null);
   }, [hintCount, digitCount, secret]);
 
-  // フィルタリング
+  // 絞り込みロジック
   const displayed = useMemo(() => {
     if (filterSlots.every((d) => d === "")) return remainingCandidates;
     return remainingCandidates.filter((num) =>
@@ -77,8 +73,8 @@ export default function CandidateList({
     );
   }, [remainingCandidates, filterSlots]);
 
-  const displayedLimited = useMemo(() => displayed.slice(0, 1000), [displayed]);
-  const allowButtons = displayed.length <= 10;
+  // **先頭100件に制限**
+  const displayedLimited = useMemo(() => displayed.slice(0, 100), [displayed]);
 
   const formattedTime = useMemo(() => {
     const s = Math.floor(elapsedMs / 1000);
@@ -169,37 +165,29 @@ export default function CandidateList({
               ))}
             </div>
 
-            {/* 件数＆表示 */}
+            {/* 件数＆制限表示 */}
             <h2>残り候補 ({displayed.length})</h2>
-            {displayed.length > 1000 && (
+            {displayed.length > 100 && (
               <p className={styles.limitNotice}>
-                ※先頭1000件のみ表示しています
-              </p>
-            )}
-            {allowButtons && (
-              <p className={styles.buttonNotice}>
-                候補が10件以下になりました。番号をクリックしてください。
+                ※先頭100件を表示しています、更なる絞り込みをお願いします。
               </p>
             )}
 
-            {/* 候補リスト */}
+            {/* 先頭100件をすべてボタン化 */}
+            <p className={styles.buttonNotice}>
+              候補をクリックすると、メインのスロットに反映します。
+            </p>
             <div className={styles.list}>
-              {allowButtons
-                ? displayed.map((num) => (
-                    <button
-                      key={num}
-                      className={styles.listItemButton}
-                      style={{ backgroundColor: "#4a90e2", color: "#fff" }}
-                      onClick={() => handleSelect(num)}
-                    >
-                      {num}
-                    </button>
-                  ))
-                : displayedLimited.map((num) => (
-                    <span key={num} className={styles.listItem}>
-                      {num}
-                    </span>
-                  ))}
+              {displayedLimited.map((num) => (
+                <button
+                  key={num}
+                  className={styles.listItemButton}
+                  style={{ backgroundColor: "#4a90e2", color: "#fff" }}
+                  onClick={() => handleSelect(num)}
+                >
+                  {num}
+                </button>
+              ))}
             </div>
           </>
         ) : (
