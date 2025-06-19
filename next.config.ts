@@ -1,22 +1,33 @@
-// next.config.ts
-import { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
-const isGhPages = process.env.DEPLOY_TARGET === 'GH_PAGES'
-const isVercel = Boolean(process.env.VERCEL)
+const withPWA = require("next-pwa")({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  // 開発中はPWAを無効化し、ビルド時にのみ有効にする設定
+  disable: process.env.NODE_ENV === "development",
+});
 
 const nextConfig: NextConfig = {
-  // GH Pages 向けだけ完全静的エクスポートにする
-  output: isGhPages ? 'export' : undefined,
-  trailingSlash: isGhPages,
-  basePath: isGhPages ? '/hitblow-next' : '',
-  assetPrefix: isGhPages ? '/hitblow-next/' : '',
-  eslint: { ignoreDuringBuilds: true },
+  reactStrictMode: true,
+  // Vercelにデプロイする場合、以下のパス設定は不要です。
+  // Vercelが自動的に最適化します。
+  // output: undefined,
+  // trailingSlash: false,
+  // basePath: "",
+  // assetPrefix: "",
+
+  // 既存のカスタム設定は維持します
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config, { isServer }) {
     if (!isServer) {
-      config.resolve.fallback = { fs: false, path: false }
+      config.resolve.fallback = { fs: false, path: false };
     }
-    return config
+    return config;
   },
-}
+};
 
-export default nextConfig
+// ★★★ 修正点: withPWAでラップした設定のみをエクスポートする ★★★
+module.exports = withPWA(nextConfig);
