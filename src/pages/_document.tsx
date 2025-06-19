@@ -14,16 +14,40 @@ class MyDocument extends Document {
   }
 
   render() {
-    // 環境変数で設定された basePath を反映
     const baseHref = process.env.NEXT_PUBLIC_BASE_PATH || "./";
-    console.log("🛠 _document.tsx → baseHref=", baseHref);
 
     return (
       <Html lang="ja">
         <Head>
-          {/* 開発時は "/"、本番 GH Pages では "/hitblow-next/" */}
+          {/* 既存のbaseタグ */}
           <base href={baseHref} />
-          {/* localStorage からテーマ属性をセット */}
+
+          {/* ★★★ ここからPWA用の設定を追加 ★★★ */}
+          <meta name="application-name" content="Hit & Blow Game" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta
+            name="apple-mobile-web-app-status-bar-style"
+            content="default"
+          />
+          <meta name="apple-mobile-web-app-title" content="Hit&Blow" />
+          <meta
+            name="description"
+            content="数字と色を当てるクラシックな論理ゲームです。"
+          />
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="mobile-web-app-capable" content="yes" />
+
+          {/* iOS用のアイコン */}
+          <link rel="apple-touch-icon" href="/icon-192x192.png" />
+
+          {/* manifest.jsonへのリンク */}
+          <link rel="manifest" href="/manifest.json" />
+
+          {/* テーマカラー */}
+          <meta name="theme-color" content="#0ea5e9" />
+          {/* ★★★ 追加ここまで ★★★ */}
+
+          {/* 既存のテーマ切り替えスクリプト */}
           <script
             dangerouslySetInnerHTML={{
               __html: `(() => {
