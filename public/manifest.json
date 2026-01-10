@@ -1,6 +1,6 @@
 {
   "name": "Next.js版Hit & Blow Game",
-  "short_name": "Hit&Blow",
+  "short_name": "React:Hit&Blow",
   "description": "数字と色を当てるクラシックな論理ゲームです。",
   "start_url": "/",
   "display": "standalone",

@@ -32,7 +32,7 @@ class MyDocument extends Document {
           <meta name="apple-mobile-web-app-title" content="Hit&Blow" />
           <meta
             name="description"
-            content="数字と色を当てるクラシックな論理ゲームです。"
+            content="N桁の数字を当てるクラシックな論理ゲームです。"
           />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
