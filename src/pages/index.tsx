@@ -24,7 +24,7 @@ export default function Home() {
   return (
     <main className={styles.container}>
       <header className={styles.appHeader}>
-        <h1>Hit & Blow Next.js版 ({store.digitCount}桁)</h1>
+        <h1>Hit&Blow Next.js版 ({store.digitCount}桁)</h1>
         <ThemeToggle />
       </header>
 
