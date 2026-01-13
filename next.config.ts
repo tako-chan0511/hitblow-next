@@ -4,22 +4,32 @@ const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
+  // 開発中はPWA無効（現状維持）
   disable: process.env.NODE_ENV === "development",
 });
+
+const isGhPages = process.env.DEPLOY_TARGET === "GH_PAGES";
+const basePath = isGhPages ? "/hitblow-next" : "";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
-  // ★ GitHub Pages デプロイ用の設定を追加
-  output: 'export',
-  basePath: '/hitblow-next',
-  assetPrefix: '/hitblow-next',
+  // GH Pages の時だけ export + basePath を効かせる
+  ...(isGhPages
+    ? {
+        output: "export" as const,
+        basePath,
+        assetPrefix: basePath,
+        // GitHub Pages は next/image が壊れやすいので必要なら有効化
+        // images: { unoptimized: true },
+      }
+    : {}),
 
-  // Turbopack用
+  // Turbopack用（現状維持）
   turbopack: {
     resolveAlias: {
-      "fs": "unimplemented",
-      "path": "unimplemented",
+      fs: "unimplemented",
+      path: "unimplemented",
     },
   },
 
@@ -27,7 +37,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Webpack用
+  // Webpack用（現状維持）
   webpack(config, { isServer }) {
     if (!isServer) {
       config.resolve.fallback = {
