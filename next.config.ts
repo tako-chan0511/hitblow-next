@@ -1,15 +1,26 @@
 import type { NextConfig } from "next";
 
+// GitHub Pages のリポジトリ名（= サブパス）
+// https://<user>.github.io/<repo>/
+const repo = "hitblow-next";
+
+const isGhPages = process.env.DEPLOY_TARGET === "GH_PAGES";
+const basePath = isGhPages ? `/${repo}` : "";
+
+// assetPrefix は末尾スラッシュ付きにして、_next 配下の結合を安定させる
+const assetPrefix = isGhPages ? `${basePath}/` : undefined;
+
 const withPWA = require("next-pwa")({
   dest: "public",
   register: true,
   skipWaiting: true,
+
   // 開発中はPWA無効（現状維持）
   disable: process.env.NODE_ENV === "development",
-});
 
-const isGhPages = process.env.DEPLOY_TARGET === "GH_PAGES";
-const basePath = isGhPages ? "/hitblow-next" : "";
+  // GH Pages 配下で SW の scope がルートになって事故らないように合わせる
+  ...(isGhPages ? { scope: `${basePath}/` } : {}),
+});
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -19,9 +30,13 @@ const nextConfig: NextConfig = {
     ? {
         output: "export" as const,
         basePath,
-        assetPrefix: basePath,
-        // GitHub Pages は next/image が壊れやすいので必要なら有効化
-        // images: { unoptimized: true },
+        assetPrefix,
+
+        // GH Pages（静的ホスティング）でパス解決を安定化
+        trailingSlash: true,
+
+        // export 時は next/image が壊れやすいので基本は unoptimized 推奨
+        images: { unoptimized: true },
       }
     : {}),
 

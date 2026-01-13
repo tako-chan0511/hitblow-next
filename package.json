@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:gh": "cross-env DEPLOY_TARGET=GH_PAGES next build",
+    "build:gh": "cross-env DEPLOY_TARGET=GH_PAGES next build && touch out/.nojekyll",
     "predeploy": "npm run build:gh",
     "deploy": "gh-pages -d out --dotfiles",
     "lint": "next lint"
